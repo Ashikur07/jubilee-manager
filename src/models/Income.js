@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const IncomeSchema = new mongoose.Schema({
-  // ১. সোর্স টাইপ (মেইন ক্যাটাগরি - যা দিয়ে আমরা ফিল্টার করবো)
+  // ১. সোর্স টাইপ (মেইন ক্যাটাগরি - যা দিয়ে আমরা ফিল্টার করবো)
   sourceType: {
     type: String,
     enum: ["BATCH", "EXTERNAL", "REGISTRATION"], 

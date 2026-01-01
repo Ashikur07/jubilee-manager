@@ -33,12 +33,14 @@ export default function HomePage() {
     { name: 'Registration', value: data.summary.regTotal || 0, color: '#F59E0B' }, // Amber
   ];
 
+  // Safe check for recent activity (API থেকে না আসলে ফাকা অ্যারে নিবে)
+  const recentActivity = data.recentActivity || [];
+
   return (
     <MobileLayout title="Overview">
       
       {/* 1. Hero Card: Glassmorphism + Gradient */}
       <div className="relative bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-6 text-white shadow-xl shadow-indigo-200 overflow-hidden mb-8">
-        {/* Abstract Background Shapes */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-10 -mt-10 blur-2xl"></div>
         <div className="absolute bottom-0 left-0 w-24 h-24 bg-purple-400 opacity-20 rounded-full -ml-10 -mb-10 blur-xl"></div>
 
@@ -83,14 +85,13 @@ export default function HomePage() {
             </ResponsiveContainer>
           </div>
 
-          {/* Custom Legend */}
           <div className="flex gap-4 mt-2 justify-center w-full">
             {chartData.map((item, idx) => (
               <div key={idx} className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
                 <div className="flex flex-col">
                   <span className="text-[10px] text-gray-400 uppercase font-bold">{item.name}</span>
-                  <span className="text-xs font-bold text-gray-700">{(item.value / data.summary.total * 100).toFixed(0)}%</span>
+                  <span className="text-xs font-bold text-gray-700">{(item.value / (data.summary.total || 1) * 100).toFixed(0)}%</span>
                 </div>
               </div>
             ))}
@@ -116,7 +117,53 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* 4. Top Contributors List */}
+      {/* 4. Recent Activity Section (Updated) */}
+      <div className="mb-8">
+        <div className="flex justify-between items-center mb-4 px-2">
+          <h3 className="text-gray-800 font-bold text-lg">Recent Activity</h3>
+        </div>
+
+        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-2">
+          {recentActivity.length > 0 ? (
+            recentActivity.map((item, idx) => (
+              <div key={idx} className="flex items-center justify-between p-3 border-b last:border-0 border-gray-50 hover:bg-gray-50 rounded-2xl transition-colors">
+                <div className="flex items-center gap-3">
+                  {/* Icon */}
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                    item.sourceType === 'BATCH' ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-600'
+                  }`}>
+                     {item.sourceType === 'BATCH' ? 'B' : 'E'}
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-bold text-gray-800 text-sm">{item.name}</h4>
+                    
+                    {/* 👇 BATCH NAME / SOURCE TYPE HERE */}
+                    <p className="text-[10px] text-gray-400 font-medium mt-0.5">
+                      {item.date ? new Date(item.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : 'Just now'} 
+                      {' • '} 
+                      <span className={`${item.sourceType === 'BATCH' ? 'text-blue-500 font-semibold' : 'text-green-500'}`}>
+                        {item.sourceType === 'BATCH' ? item.batchName : 'External Sponsor'}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="text-right">
+                  <span className="font-bold text-gray-800 text-sm block">+৳{item.amount.toLocaleString()}</span>
+                  <span className="text-[10px] text-gray-400">Received</span>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="text-center py-6 text-gray-400 text-xs">
+              No recent transactions found.
+            </div>
+          )}
+        </div>
+      </div>
+      
+      {/* 5. Top Contributors List */}
       <div className="mb-20">
         <div className="flex justify-between items-center mb-4 px-2">
           <h3 className="text-gray-800 font-bold text-lg">Top Heroes</h3>

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import dbConnect from "@/lib/db"; // আগে এখানে dbConnect ছিল, এখন db.js অনুযায়ী db দিলাম
+import dbConnect from "@/lib/db"; 
 import Income from "@/models/Income";
 
 export async function GET() {
@@ -25,7 +25,14 @@ export async function GET() {
       .limit(5)
       .select("name batchName amount sourceType");
 
-    // 4. Summaries
+    // 4. [NEW] Recent Activity (Frontend এর জন্য নতুন যোগ করা হলো)
+    // createdAt: -1 মানে একদম লেটেস্ট ডাটা আগে আসবে
+    const recentActivity = await Income.find({})
+      .sort({ createdAt: -1 }) 
+      .limit(10) // লেটেস্ট ১০টা ট্রানজেকশন দেখাবে
+      .select("name amount sourceType batchName createdAt date receivedBy");
+
+    // 5. Summaries
     const allData = await Income.find({}, "sourceType amount");
     const summary = {
       total: allData.reduce((acc, curr) => acc + curr.amount, 0),
@@ -37,6 +44,7 @@ export async function GET() {
       batchStats, 
       accountStats, 
       topContributors, 
+      recentActivity, // <--- এই নতুন ডাটা এখন রেস্পন্সে যাবে
       summary 
     }, { status: 200 });
 

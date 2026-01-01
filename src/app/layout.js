@@ -1,11 +1,15 @@
 import './globals.css';
 
 export const metadata = {
-  title: 'Reunion Finance',
-  description: 'Financial Dashboard for Reunion',
-  manifest: '/manifest.json', // Must match public/manifest.json path
-  themeColor: '#2563eb',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0', // Prevents zoom on mobile inputs
+  title: "ICT Reunion | Fund Tracker",
+  description: "Track deposits, expenses and sponsors for the reunion.",
+  manifest: "/manifest.json",
+  themeColor: "#4F46E5",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
+  icons: {
+    icon: "/logo.svg",
+    apple: "/logo.svg", 
+  },
 };
 
 export default function RootLayout({ children }) {

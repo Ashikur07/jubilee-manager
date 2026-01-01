@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function CollectionsPage() {
   const [activeTab, setActiveTab] = useState('batch');
-  const [data, setData] = useState({ batchStats: [], topContributors: [] });
+  const [data, setData] = useState({ batchStats: [], topContributors: [], summary: { total: 0, external: 0 } });
   const [loading, setLoading] = useState(true);
 
   // Colorful Gradients Array
@@ -40,6 +40,22 @@ export default function CollectionsPage() {
   return (
     <MobileLayout title="Collections">
       
+      {/* 1. Header Card (Blue Gradient for Income) - NEW ADDITION */}
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 rounded-3xl shadow-lg shadow-blue-200 text-center mb-6 text-white relative overflow-hidden">
+        {/* Abstract Circle Design */}
+        <div className="absolute top-[-20px] right-[-20px] w-24 h-24 bg-white opacity-10 rounded-full blur-xl"></div>
+        <div className="absolute bottom-[-20px] left-[-20px] w-20 h-20 bg-indigo-900 opacity-10 rounded-full blur-xl"></div>
+
+        <p className="text-blue-100 text-xs uppercase tracking-widest font-bold">Total Collection</p>
+        <h2 className="text-3xl font-extrabold mt-2">
+          {loading ? '...' : `৳ ${data.summary.total.toLocaleString()}`}
+        </h2>
+        <div className="mt-3 inline-block bg-white/20 backdrop-blur-md text-white px-4 py-1 rounded-full text-xs font-bold border border-white/30">
+          {/* Total entries count logic can be added here if available, currently showing "All Sources" */}
+          All Sources
+        </div>
+      </div>
+
       {/* Tab Switcher */}
       <div className="bg-white p-1 rounded-xl flex mb-6 shadow-sm border border-gray-100">
         <button 

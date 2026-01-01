@@ -5,6 +5,9 @@ import MobileLayout from '@/components/MobileLayout';
 import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2'; 
 
+// 👇 ১. এই লাইনটি নতুন যোগ করা হয়েছে (Expense Form Import)
+import AddExpenseForm from '@/components/AddExpenseForm'; 
+
 export default function AddTransactionPage() {
   const router = useRouter();
   
@@ -19,12 +22,12 @@ export default function AddTransactionPage() {
   // Form State
   const [formData, setFormData] = useState({
     name: '',
-    amount: '', // Amount will be string initially to handle decimals properly in input
+    amount: '', 
     paymentMethod: 'Bank Transfer', 
     receivedBy: 'Alumni Account',
     receiptNo: '',
     currentResidence: '',
-    batchName: '', // Dropdown
+    batchName: '', 
     reference: '',
     regSource: 'SSL', 
   });
@@ -42,10 +45,7 @@ export default function AddTransactionPage() {
   // Handle Input Change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    // Amount validation (allow numbers and one dot)
     if (name === 'amount') {
-      // Regex to allow positive decimal numbers
       if (value === '' || /^\d*\.?\d{0,2}$/.test(value)) {
         setFormData(prev => ({ ...prev, [name]: value }));
       }
@@ -54,14 +54,13 @@ export default function AddTransactionPage() {
     }
   };
 
-  // Handle Submit
+  // Handle Submit (INCOME ONLY)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
+    // Income Logic
     if (transType === 'INCOME') {
-      
-      // Parse Amount carefully
       const floatAmount = parseFloat(formData.amount);
       
       if (isNaN(floatAmount) || floatAmount <= 0) {
@@ -79,7 +78,7 @@ export default function AddTransactionPage() {
       const payload = {
         sourceType: activeTab,
         name: activeTab === 'REGISTRATION' ? `Reg via ${formData.regSource}` : formData.name, 
-        amount: floatAmount, // Send as Number
+        amount: floatAmount, 
         paymentMethod: formData.paymentMethod,
         receivedBy: formData.receivedBy,
         receiptNo: formData.receiptNo,
@@ -146,16 +145,7 @@ export default function AddTransactionPage() {
       } finally {
         setLoading(false);
       }
-    } else {
-      Swal.fire({
-        title: 'Coming Soon!',
-        text: 'Expense tracking is under development.',
-        icon: 'info',
-        confirmButtonColor: '#EF4444',
-        customClass: { popup: 'rounded-3xl' }
-      });
-      setLoading(false);
-    }
+    } 
   };
 
   return (
@@ -185,7 +175,7 @@ export default function AddTransactionPage() {
 
       {transType === 'INCOME' ? (
         <>
-          {/* Sub-Tabs */}
+          {/* ... INCOME FORM UI (Same as before) ... */}
           <div className="flex gap-2 mb-4 overflow-x-auto pb-2 no-scrollbar">
             {['BATCH', 'EXTERNAL', 'REGISTRATION'].map((tab) => (
               <button
@@ -223,14 +213,14 @@ export default function AddTransactionPage() {
                 </div>
               )}
 
-              {/* Amount Field (Improved for Decimal) */}
+              {/* Amount Field */}
               <div>
                 <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Amount (BDT)</label>
                 <div className="relative">
                   <span className="absolute left-4 top-3 text-gray-400 font-bold">৳</span>
                   <input
-                    type="text" // Input type 'text' to allow control over decimal input
-                    inputMode="decimal" // Mobile keyboard will show numbers + dot
+                    type="text"
+                    inputMode="decimal"
                     name="amount"
                     required
                     value={formData.amount}
@@ -241,7 +231,7 @@ export default function AddTransactionPage() {
                 </div>
               </div>
 
-              {/* --- BATCH DROPDOWN & DYNAMIC FIELDS --- */}
+              {/* BATCH DROPDOWN & DYNAMIC FIELDS */}
               {activeTab === 'BATCH' && (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -259,7 +249,6 @@ export default function AddTransactionPage() {
                           <option key={batch} value={batch}>{batch}</option>
                         ))}
                       </select>
-                      {/* Arrow Icon */}
                       <div className="absolute right-3 top-3.5 pointer-events-none text-gray-400">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                       </div>
@@ -323,7 +312,7 @@ export default function AddTransactionPage() {
                       {paymentMethods.map(m => <option key={m} value={m}>{m}</option>)}
                     </select>
                     <div className="absolute right-3 top-3.5 pointer-events-none text-gray-400">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                     </div>
                   </div>
                 </div>
@@ -340,7 +329,7 @@ export default function AddTransactionPage() {
                       {receivers.map(r => <option key={r} value={r}>{r}</option>)}
                     </select>
                     <div className="absolute right-3 top-3.5 pointer-events-none text-gray-400">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                     </div>
                   </div>
                 </div>
@@ -374,13 +363,9 @@ export default function AddTransactionPage() {
           </div>
         </>
       ) : (
-        // Expense Placeholder
-        <div className="flex flex-col items-center justify-center py-20 opacity-60">
-           <div className="bg-red-50 p-6 rounded-full mb-4">
-             <svg className="w-10 h-10 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-           </div>
-           <h3 className="text-gray-800 font-bold">Expense Feature</h3>
-           <p className="text-sm text-gray-500 mt-1">Coming soon...</p>
+        // 👇 ২. এইখানে Expense Component বসানো হয়েছে (আগে "Coming Soon" ছিল)
+        <div className="animate-fade-in-up">
+           <AddExpenseForm />
         </div>
       )}
 
